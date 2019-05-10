@@ -1,0 +1,25 @@
+#!{{pkgPathFor "core/bash"}}/bin/bash -xe
+#
+exec 2>&1
+
+cd {{pkg.svc_path}}
+
+# Work around for iptables issue > 
+#   https://discuss.concourse-ci.org/t/5-1-0-worker-failed-to-ping-registry/1351
+$(pkg_path_for core/iptables)/sbin/iptables -P FORWARD ACCEPT
+
+concourse worker \
+  --name={{ cfg.worker.name }} \
+  --work-dir {{ cfg.worker.work_dir }} \
+  {{~#if bind.web ~}}
+    {{#with bind.web.first as |web| }}
+      --tsa-host {{ web.sys.ip }}:{{ web.cfg.tsa_port}} \
+    {{/with ~}}
+  {{else ~}}
+    --tsa-host {{ cfg.web.tsa_host }}:{{ cfg.web.tsa_port }} \
+  {{/if ~}}
+  {{# if cfg.worker.garden-dns-proxy-enable ~}}
+    --garden-dns-proxy-enable \
+  {{/if ~}}
+  --tsa-public-key {{ cfg.web.public_key }} \
+  --tsa-worker-private-key {{ cfg.worker.private_key }} 

@@ -1,17 +1,25 @@
 # Use this file to templatize your application's native configuration files.
 # See the docs at https://www.habitat.sh/docs/create-packages-configure/.
 # You can safely delete this file if you don't need it.
+[postgresql]
 port = 5432
-
 max_connections = 100
 max_locks_per_transaction = 64
 log_line_prefix = '%t [%p]: [%l-1] user=%u,db=%d,client=%h %r (%x:%e)'
 log_level = 'ERROR'
 logging_collector = 'on'
+#cfg.postgresql.archive_path
 
 [superuser]
-name = 'admin'
-password = 'admin'
+name = 'psql_superuser'
+password = 'psql_superpass'
+
+[concourse]
+setup_concourse_db = true
+[concourse.db]
+username = "ci_dbuser"
+password = "ci_dbpass"
+name = "atc"
 
 # options for hot standby
 [replication]

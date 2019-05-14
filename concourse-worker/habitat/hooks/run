@@ -6,20 +6,22 @@ cd {{pkg.svc_path}}
 
 # Work around for iptables issue > 
 #   https://discuss.concourse-ci.org/t/5-1-0-worker-failed-to-ping-registry/1351
-$(pkg_path_for core/iptables)/sbin/iptables -P FORWARD ACCEPT
+{{pkgPathFor "core/iptables"}}/sbin/iptables -P FORWARD ACCEPT
 
 concourse worker \
-  --name={{ cfg.worker.name }} \
-  --work-dir {{ cfg.worker.work_dir }} \
+  --name=hab_{{sys.member_id}} \ 
+# --name={{ cfg.concourse.worker.name }} \
+  --work-dir {{ cfg.concourse.worker.work_dir }} \
   {{~#if bind.web ~}}
     {{#with bind.web.first as |web| }}
-      --tsa-host {{ web.sys.ip }}:{{ web.cfg.tsa_port}} \
+      --tsa-host {{ web.sys.ip }}:{{ web.cfg.concourse_web_tsa_port}} \
     {{/with ~}}
   {{else ~}}
-    --tsa-host {{ cfg.web.tsa_host }}:{{ cfg.web.tsa_port }} \
+    --tsa-host {{ cfg.concourse.web.tsa_host }}:{{ cfg.concourse.web.tsa_port }} \
   {{/if ~}}
-  {{# if cfg.worker.garden-dns-proxy-enable ~}}
+  {{# if cfg.concourse.worker.garden-dns-proxy-enable ~}}
     --garden-dns-proxy-enable \
   {{/if ~}}
-  --tsa-public-key {{ cfg.web.public_key }} \
-  --tsa-worker-private-key {{ cfg.worker.private_key }} 
+  --baggageclaim-driver={{cfg.concourse.worker.baggageclaim_driver}} \
+  --tsa-public-key {{pkg.svc_config_path}}/{{ cfg.concourse.web.public_key }} \
+  --tsa-worker-private-key {{pkg.svc_config_path}}/{{ cfg.concourse.worker.private_key }} 

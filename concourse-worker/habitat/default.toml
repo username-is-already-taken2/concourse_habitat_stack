@@ -1,11 +1,13 @@
-[worker]
+[concourse]
+[concourse.worker]
 work_dir = "/opt/concourse/worker"
-name = "{{sys.member_id}}"
-private_key = "{{pkg.svc_config_path}}/keys/worker/worker_key"
+# name = "{{sys.member_id}}"
+private_key = "keys/worker/worker_key"
 garden-dns-proxy-enable = true
+baggageclaim_driver="naive"
 
-[web]
+[concourse.web]
 # We'll default to loopback but override it within the run hook to use the details from the bind
-tsa_host = "127.0.0.1"
-tsa_port = "2222"
-public_key = "{{pkg.svc_config_path}}/keys/worker/tsa_host_key.pub"
+tsa_host = ""
+tsa_port = ""
+public_key = "keys/web/tsa_host_key.pub"

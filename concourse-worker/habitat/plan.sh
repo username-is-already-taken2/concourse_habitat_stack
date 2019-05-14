@@ -1,6 +1,6 @@
 pkg_name=concourse-worker
 pkg_origin=digitalgaz
-pkg_version="0.1.0"
+pkg_version="1.0.0"
 pkg_maintainer="Gary Bright <digitalgaz@hotmail.com>"
 pkg_license=('Apache-2.0')
 pkg_description="CI that scales with your project"
@@ -10,7 +10,7 @@ pkg_svc_group="root"
 pkg_svc_user="root"
 pkg_deps=(digitalgaz/concourse core/iptables core/bash core/findutils)
 pkg_binds_optional=(
-   [web]="tsa_port"
+   [web]="concourse_web_tsa_port"
 )
 
 do_build(){

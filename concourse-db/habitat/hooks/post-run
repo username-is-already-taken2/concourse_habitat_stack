@@ -1,0 +1,17 @@
+#!{{pkgPathFor "core/bash"}}/bin/bash
+#
+
+set -e
+exec 2>&1
+
+echo 'Executing post-run hook'
+
+source {{pkg.svc_config_path}}/functions.sh
+
+{{#if cfg.concourse.setup_concourse_db ~}}
+  echo "Running Concourse Setup in 5seconds"
+  sleep 5s
+  setup_concourse_user
+  setup_concourse_db
+{{~/if}}
+echo 'Finished post-run hook'

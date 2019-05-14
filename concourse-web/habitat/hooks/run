@@ -1,0 +1,50 @@
+#!{{pkgPathFor "core/bash"}}/bin/bash
+#
+exec 2>&1
+
+# source "{{pkg.svc_config_path}}/config.sh"
+
+cd {{pkg.svc_path}}
+
+# Are we binding to a database or using the details from the config
+{{#if bind.database ~}}
+{{#with bind.database.first as |pg| }}
+export CONCOURSE_POSTGRES_HOST="{{pg.sys.ip}}"
+export CONCOURSE_POSTGRES_PORT"{{pg.cfg.postgresql_port}}"
+export CONCOURSE_POSTGRES_USER="{{pg.cfg.concourse_db_username}}"
+export CONCOURSE_POSTGRES_PASSWORD="{{pg.cfg.concourse_db_password}}"
+export CONCOURSE_POSTGRES_DATABASE="{{pg.cfg.concourse_db_name}}"
+{{/with}}
+{{else ~}}
+export CONCOURSE_POSTGRES_HOST="{{cfg.postgres.host_ip}}"
+export CONCOURSE_POSTGRES_PORT="{{cfg.postgres.post}}"
+export CONCOURSE_POSTGRES_USER="{{cfg.postgres.username}}"
+export CONCOURSE_POSTGRES_PASSWORD="{{cfg.postgres.password}}"
+export CONCOURSE_POSTGRES_DATABASE="{{cfg.postgres.database}}"
+{{/if ~}}
+
+{{#if cfg.concourse.web.add_local_user ~}}
+export CONCOURSE_ADD_LOCAL_USER="{{cfg.concourse.web.localuser}}:{{cfg.concourse.web.localuser_password}}"
+export CONCOURSE_MAIN_TEAM_LOCAL_USER="{{cfg.concourse.web.localuser}}"
+{{/if ~}}
+
+{{#if cfg.concourse.web.external_url ~}}
+export CONCOURSE_EXTERNAL_URL="{{cfg.concourse.web.external_url}}:{{cfg.concourse.web.bind_port}}"
+{{else ~}}
+export CONCOURSE_EXTERNAL_URL="{{sys.ip}}"
+{{/if ~}}
+export CONCOURSE_BIND_PORT="{{cfg.concourse.web.bind_port}}"
+
+#PG_PASS=$CONCOURSE_POSTGRES_PASSWORD
+#PG_HOST=$CONCOURSE_POSTGRES_HOST
+
+#if PGPASSWORD=$PG_PASS "$(pkg_path_for core/postgresql-client)/bin/psql -lqt -h $PG_HOST -U $CONCOURSE_POSTGRES_USER | cut -d \| -f 1 | grep -qw concourse; then
+#    echo "database already exists"
+#else
+#    PGPASSWORD=$PG_PASS createdb $CONCOURSE_POSTGRES_DATABASE -h $PG_HOST -U $CONCOURSE_POSTGRES_USER
+#fi
+
+concourse web \
+    --session-signing-key {{pkg.svc_config_path}}/{{cfg.concourse.web.session_signing_key}} \
+    --tsa-host-key {{pkg.svc_config_path}}/{{cfg.concourse.web.tsa_host_key}} \
+    --tsa-authorized-keys {{pkg.svc_config_path}}/{{cfg.concourse.web.tsa_authorized_keys}} 

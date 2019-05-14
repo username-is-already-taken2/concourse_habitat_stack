@@ -4,5 +4,5 @@ exec 2>&1
 # The installation docs state - All state on disk must not outlive the worker itself; it is all ephemeral. 
 #   If the worker is re-created (i.e. fresh VM/container and all processes were killed), it should be brought back with an empty disk.
 #   So I'm going to wax the working directory, a little smelly
-rmdir -rf {{cfg.worker.work_dir}}
-mkdir -p {{cfg.worker.work_dir}}
+rm -rf {{cfg.concourse.worker.work_dir}}
+mkdir -p {{cfg.concourse.worker.work_dir}}

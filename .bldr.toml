@@ -1,5 +1,9 @@
+# .bldr.toml
+[concourse-db]
+plan_path = "concourse-db/habitat"
+
 [concourse-web]
-plan_path = "concourse-web"
+plan_path = "concourse-web/habitat"
+
 [concourse-worker]
 plan_path = "concourse-worker"
-

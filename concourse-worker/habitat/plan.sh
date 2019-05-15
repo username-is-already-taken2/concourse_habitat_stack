@@ -1,6 +1,6 @@
 pkg_name=concourse-worker
 pkg_origin=digitalgaz
-pkg_version="1.0.0"
+pkg_version="1.0.1"
 pkg_maintainer="Gary Bright <digitalgaz@hotmail.com>"
 pkg_license=('Apache-2.0')
 pkg_description="CI that scales with your project"

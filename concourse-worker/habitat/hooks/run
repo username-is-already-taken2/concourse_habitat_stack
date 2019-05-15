@@ -9,8 +9,11 @@ cd {{pkg.svc_path}}
 {{pkgPathFor "core/iptables"}}/sbin/iptables -P FORWARD ACCEPT
 
 concourse worker \
-  --name=hab_{{sys.member_id}} \ 
-# --name={{ cfg.concourse.worker.name }} \
+  {{~#if cfg.concourse.worker.name ~}}
+    --name={{ cfg.concourse.worker.name }} \
+  {{else ~}}
+    --name=hab_{{sys.member_id}} \
+  {{/if ~}} 
   --work-dir {{ cfg.concourse.worker.work_dir }} \
   {{~#if bind.web ~}}
     {{#with bind.web.first as |web| }}
